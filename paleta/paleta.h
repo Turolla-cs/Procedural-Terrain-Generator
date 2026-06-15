@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-
 struct Cor {
     int r, g, b;
 };
@@ -22,6 +21,5 @@ class Paleta {
         void adicionarCor(Cor novaEntrada);
         int obterTamanho();
 };
-
 
 #endif

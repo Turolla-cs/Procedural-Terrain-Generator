@@ -4,10 +4,9 @@
 
 
 
-//falta tratar para ignorar #
 Cor hexaInt(std::string hexa) {
     int r = 0, g = 0, b = 0;
-    for (int i = 0; i < 6; i++) {
+    for (int i = 1; i < 7; i++) {
         int valor;
         if (hexa[i] >= 48 && hexa[i] <= 57) {
             valor = hexa[i] - '0';
@@ -26,20 +25,20 @@ Cor hexaInt(std::string hexa) {
                 valor = 15;
             }
         }
-        if (i < 2) {
-            if (i == 1) {
+        if (i < 3) {
+            if (i == 2) {
                 r += valor;
             } else {
                 r += 16*valor;
             }
-        } else if (i < 4) {
-            if (i == 3) {
+        } else if (i < 5) {
+            if (i == 4) {
                 g += valor;
             } else {
                 g += 16*valor;
             }
         } else {
-            if (i == 5) {
+            if (i == 6) {
                 b += valor;
             } else {
                 b += 16*valor;
@@ -53,26 +52,31 @@ Cor hexaInt(std::string hexa) {
     return saida;
 }
 
-Paleta::Paleta(){
+Paleta::Paleta() {
     tamanho = 0;
 }
 
 Paleta::Paleta(std::string nomeDoArquivo){
     tamanho = 0;
     std::ifstream file(nomeDoArquivo);
-    std::string hexadecimal;
-    
-    while (getline(file, hexadecimal)) {
-        if (!hexadecimal.empty()) {
-            cores.push_back(hexaInt(hexadecimal));
-            tamanho++;
+    if (file.is_open()) {
+        std::string hexadecimal;
+        
+        while (getline(file, hexadecimal)) {
+            if (!hexadecimal.empty()) {
+                cores.push_back(hexaInt(hexadecimal));
+                tamanho++;
             }
+        }
+        file.close();
+    } else {
+        std::cout << "Erro 52: nome de arquivo incorreto\n";
     }
-    file.close();
 }
 
 void Paleta::adicionarCor(Cor novaCor){
- //tem no test mas não fizemos
+    cores.push_back(novaCor);
+    tamanho++;
 }
 
 int Paleta::obterTamanho(){
@@ -80,9 +84,14 @@ int Paleta::obterTamanho(){
 }
 
 Cor Paleta::obterCor(int indice){
-    Cor gabriel;
-    gabriel.r = cores[indice].r;
-    gabriel.g = cores[indice].g;
-    gabriel.b = cores[indice].b;
-    return gabriel;
+    if (indice < tamanho) {
+        Cor gabriel;
+        gabriel.r = cores[indice].r;
+        gabriel.g = cores[indice].g;
+        gabriel.b = cores[indice].b;
+        return gabriel;
+    } else {
+        Cor invalida = {0, 0, 0};
+        return invalida;
+    }
 }
