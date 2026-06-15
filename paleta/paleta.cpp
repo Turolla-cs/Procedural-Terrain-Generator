@@ -1,13 +1,10 @@
+#include "paleta.h"
 #include <iostream>
 #include <fstream>
 
-#include <string>
-#include <vector>
 
-struct Cor {
-    int R, G, B;
-};
 
+//falta tratar para ignorar #
 Cor hexaInt(std::string hexa) {
     int r = 0, g = 0, b = 0;
     for (int i = 0; i < 6; i++) {
@@ -50,68 +47,42 @@ Cor hexaInt(std::string hexa) {
         }
     }
     Cor saida;
-    saida.R = r;
-    saida.G = g;
-    saida.B = b;
+    saida.r = r;
+    saida.g = g;
+    saida.b = b;
     return saida;
 }
 
-class Paleta {
-    std::vector<Cor> cores;
-    int tamanho;
+Paleta::Paleta(){
+    tamanho = 0;
+}
 
-    public:
-        Paleta() { tamanho = 0; }
-
-        Paleta(std::ifstream& file) {
-            tamanho = 0;
-            std::string hexadecimal;
-            while (getline(file, hexadecimal)) {
-                if (!hexadecimal.empty()) {
-                    cores.push_back(hexaInt(hexadecimal));
-                    tamanho++;
-                }
+Paleta::Paleta(std::string nomeDoArquivo){
+    tamanho = 0;
+    std::ifstream file(nomeDoArquivo);
+    std::string hexadecimal;
+    
+    while (getline(file, hexadecimal)) {
+        if (!hexadecimal.empty()) {
+            cores.push_back(hexaInt(hexadecimal));
+            tamanho++;
             }
-        }
-
-        Cor getCor(int indice) {
-            Cor gabriel;
-            gabriel.R = cores[indice].R;
-            gabriel.G = cores[indice].G;
-            gabriel.B = cores[indice].B;
-            return gabriel;
-        }
-
-        int getTamanho() {
-            return tamanho;
-        }
-};
-
-int main() {
-
-    std::ofstream file("paleta.txt");
-    std::cout << "Quantas cores deseja na paleta? ";
-    int n;
-    std::cin >> n;
-
-    std::cout << "Insira as cores em formato hexadecimal:\n";
-    if (file.is_open()) {
-        for (int i = 0; i < n; i++) {
-            std::string hexadecimal;
-            std::cin >> hexadecimal;
-            file << hexadecimal << std::endl;
-        }
-        file.close();
-        std::ifstream file("paleta.txt");
-        Paleta turolla(file);
-        for (int i = 0; i < turolla.getTamanho(); i++) {
-            std::cout << turolla.getCor(i).R << " " << turolla.getCor(i).B << " " << turolla.getCor(i).B << "\n";
-        }
-        file.close();
-        remove("paleta.txt");
-    } else {
-        std::cout << "Erro na criação da paleta\n";
     }
+    file.close();
+}
 
-    return 0;
+void Paleta::adicionarCor(Cor novaCor){
+ //tem no test mas não fizemos
+}
+
+int Paleta::obterTamanho(){
+    return tamanho;
+}
+
+Cor Paleta::obterCor(int indice){
+    Cor gabriel;
+    gabriel.r = cores[indice].r;
+    gabriel.g = cores[indice].g;
+    gabriel.b = cores[indice].b;
+    return gabriel;
 }
