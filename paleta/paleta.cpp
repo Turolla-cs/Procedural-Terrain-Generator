@@ -3,7 +3,7 @@
 #include <fstream>
 
 
-
+//Dividir em uma função que vai tratar da string hexadecimal em pedaços e chamar ela várias vezes.
 Cor hexaInt(std::string hexa) {
     int r = 0, g = 0, b = 0;
     for (int i = 1; i < 7; i++) {
@@ -52,12 +52,9 @@ Cor hexaInt(std::string hexa) {
     return saida;
 }
 
-Paleta::Paleta() {
-    tamanho = 0;
-}
+Paleta::Paleta() {}
 
 Paleta::Paleta(std::string nomeDoArquivo){
-    tamanho = 0;
     std::ifstream file(nomeDoArquivo);
     if (file.is_open()) {
         std::string hexadecimal;
@@ -65,7 +62,6 @@ Paleta::Paleta(std::string nomeDoArquivo){
         while (getline(file, hexadecimal)) {
             if (!hexadecimal.empty()) {
                 cores.push_back(hexaInt(hexadecimal));
-                tamanho++;
             }
         }
         file.close();
@@ -76,20 +72,15 @@ Paleta::Paleta(std::string nomeDoArquivo){
 
 void Paleta::adicionarCor(Cor novaCor){
     cores.push_back(novaCor);
-    tamanho++;
 }
 
 int Paleta::obterTamanho(){
-    return tamanho;
+    return cores.size();
 }
 
 Cor Paleta::obterCor(int indice){
-    if (indice < tamanho) {
-        Cor gabriel;
-        gabriel.r = cores[indice].r;
-        gabriel.g = cores[indice].g;
-        gabriel.b = cores[indice].b;
-        return gabriel;
+    if (indice < cores.size()) {
+        return cores[indice];
     } else {
         Cor invalida = {0, 0, 0};
         return invalida;

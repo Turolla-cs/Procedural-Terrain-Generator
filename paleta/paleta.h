@@ -11,7 +11,6 @@ struct Cor {
 class Paleta {
     private:
         std::vector<Cor> cores;
-        int tamanho;
 
     public:
         Paleta();

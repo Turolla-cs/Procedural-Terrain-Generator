@@ -3,9 +3,7 @@
 
 #include "../paleta/paleta.h" 
 
-struct Pixel {
-    Cor cor;
-};
+using Pixel = Cor;
 
 class Imagem {
     private:
@@ -13,11 +11,12 @@ class Imagem {
         int altura;
         int *matriz;
     public:
-        Imagem(int x, int y);
+        Imagem();
+        Imagem(int i, int j);
         ~Imagem();
 
-        Pixel obterPixel(int x, int y);
-        void definirPixel(int x, int y, Pixel cor);
+        Pixel& obterPixel(int i, int j);
+        void definirPixel(int i, int j);
         bool lerPPM(std::string nomeArquivo);
         bool salvarPPM(std::string nomeArquivo);
         int obterLargura();
