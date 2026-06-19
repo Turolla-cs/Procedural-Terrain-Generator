@@ -1,15 +1,20 @@
 #include "imagem.h"
+
 #include <iostream>
 #include <string>
 #include <fstream>
 
 
-Imagem::Imagem() {}
+Imagem::Imagem() { 
+    largura = 0;
+    altura = 0;
+    matriz = nullptr;
+}
 
-Imagem::Imagem(int i, int j) {
-    largura = i;
-    altura = j;
-    matriz = new int[i * j];
+Imagem::Imagem(int j, int i) {
+    altura = i;
+    largura = j;
+    matriz = new Pixel[largura * altura];
 }
 
 Imagem::~Imagem() {
@@ -25,36 +30,73 @@ int Imagem::obterAltura() {
 }
 
 
-Pixel& Imagem::obterPixel(int i, int j) {
+Pixel& Imagem::obterPixel(int j, int i) {
     return matriz[i * largura + j];
 }
 
-
+void Imagem::definirPixel(int j, int i, const Pixel cor) {
+    matriz[i * largura + j] = cor;
+}
 
 bool Imagem::lerPPM(std::string nomeArquivo) {
     std::ifstream file(nomeArquivo);
-    if (file.is_open()) {
-        std::string s;
-        getline(file, s);
-        if (s == "P3") {
-            getline(file, s);
-            int alturaLargura = stoi(s);
-            int largura = alturaLargura/10;
-            int altura = alturaLargura%10;
-            getline(file,s);
-            int valorMaxRgb = stoi(s);
-            for (int i = 0; i < (altura*largura); i++) {
-                
+
+    if (!file.is_open()) {
+        std::cerr << "Erro 52: nome de arquivo incorreto\n";
+        return false;
+    }
+
+    std::string s;
+
+    file >> s;
+    if (s == "P3") {
+
+        if (matriz != nullptr) {
+            delete[] matriz;
+        }
+
+        int valorMaxRgb;
+        file >> largura >> altura >> valorMaxRgb;
+
+        matriz = new Pixel[largura * altura];
+        
+        for (int m = 0; m < altura; m++) {
+            for (int n = 0; n < largura; n++) {
+                int red, green, blue;
+                file >> red >> green >> blue;
+                Pixel p = {red, green, blue};
+                definirPixel(n, m, p);
             }
         }
-        else {
-            std::cout << "Tipo de imagem incorreto, utilize o tipo PPM P3"; 
-        }
-            
+
+        file.close();
+        return true;
+
+    } else {
+
+        std::cerr << "Tipo de imagem incorreto, utilize o tipo PPM P3";
+        file.close();
+        return false;
+
     }
+
+    return true;
 }
 
 
 bool Imagem::salvarPPM(std::string nomeArquivo) {
+    std::ofstream file(nomeArquivo);
 
+    if (file.is_open()) {
+        file << "P3\n" << largura << " " << altura << "\n" << "255\n";
+        for (int k = 0; k < altura*largura; k++) {
+            Pixel p = obterPixel(k%largura, k/largura);
+            file << p.r << " " << p.g << " " << p.b << "\n";
+        }
+    } else {
+        std::cout << "Erro ao criar arquivo\n";
+        return false;
+    }
+
+    return true;
 }

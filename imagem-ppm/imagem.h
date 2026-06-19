@@ -9,14 +9,14 @@ class Imagem {
     private:
         int largura;
         int altura;
-        int *matriz;
+        Pixel *matriz;
     public:
         Imagem();
-        Imagem(int i, int j);
+        Imagem(int j, int i);
         ~Imagem();
 
-        Pixel& obterPixel(int i, int j);
-        void definirPixel(int i, int j);
+        Pixel& obterPixel(int j, int i);
+        void definirPixel(int j, int i, const Pixel cor);
         bool lerPPM(std::string nomeArquivo);
         bool salvarPPM(std::string nomeArquivo);
         int obterLargura();
