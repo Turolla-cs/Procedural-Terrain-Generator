@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include <cmath>
-
+#include <filesystem>
 
 Imagem::Imagem() { 
     largura = 0;
@@ -40,7 +40,9 @@ void Imagem::definirPixel(int j, int i, const Pixel cor) {
 }
 
 bool Imagem::lerPPM(std::string nomeArquivo) {
-    std::ifstream file(nomeArquivo);
+    std::string Caminho = "input";
+    std::filesystem::path fonte = std::filesystem::path (Caminho)/nomeArquivo;
+    std::ifstream file(fonte);
 
     if (!file.is_open()) {
         std::cerr << "Erro 52: nome de arquivo incorreto\n";
@@ -86,7 +88,9 @@ bool Imagem::lerPPM(std::string nomeArquivo) {
 
 
 bool Imagem::salvarPPM(std::string nomeArquivo) {
-    std::ofstream file(nomeArquivo);
+    std::string Caminho = "output";
+    std::filesystem::path destino = std::filesystem::path (Caminho)/nomeArquivo;
+    std::ofstream file(destino);
 
     if (file.is_open()) {
         file << "P3\n" << largura << " " << altura << "\n" << "255\n";

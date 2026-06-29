@@ -16,6 +16,7 @@ int main() {
     std::cin >> nomeArquivo;
 
     Paleta paleta(nomeArquivo);
+    Paleta paletaCinza("paletaCinza.txt");
 
     int tamanho;
     double rugosidade = 25000;
@@ -26,15 +27,17 @@ int main() {
     Terreno terreno(std::pow(2, tamanho) + 1, rugosidade);
 
     Imagem imagem(terreno, paleta);
+    Imagem imagemCinza(terreno, paletaCinza);
 
-    std::cout << "Qual o nome do arquivo desejado? ";
+    std::cout << "Qual o nome do arquivo que será criado? ";
     std::cin >> nomeArquivo;
+    std::string nomeArquivoCinza = nomeArquivo + "Cinza";
 
     imagem.salvarPPM(nomeArquivo);
+    imagemCinza.salvarPPM(nomeArquivoCinza);
     terreno.salvarMatriz("terreno.txt");
 
-    std::cout << "Um arquivo " << nomeArquivo << " com a sua imagem foi criado\n";
-    std::cout << "Um arquivo terreno.txt com as altitudes do seu terreno foi criado\n";
+    std::cout << "Arquivos criados: \n- Um arquivo chamado " << nomeArquivo <<"\n- Um arquivo chamado " << nomeArquivo <<"Cinza\n- Um arquivo chamado terreno.txt com as altitudes do seu terreno\n Todos estarão na pasta output\n";
 
     return 0;
 }

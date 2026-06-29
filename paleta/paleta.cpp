@@ -1,9 +1,9 @@
 #include "paleta.h"
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 
-//Dividir em uma função que vai tratar da string hexadecimal em pedaços e chamar ela várias vezes.
 Cor hexaInt(std::string hexa) {
     int r = 0, g = 0, b = 0;
     for (int i = 1; i < 7; i++) {
@@ -55,7 +55,9 @@ Cor hexaInt(std::string hexa) {
 Paleta::Paleta() {}
 
 Paleta::Paleta(std::string nomeDoArquivo){
-    std::ifstream file(nomeDoArquivo);
+    std::string Caminho = "input";
+    std::filesystem::path fonte = std::filesystem::path (Caminho)/nomeDoArquivo;
+    std::ifstream file(fonte);
     if (file.is_open()) {
         std::string hexadecimal;
         

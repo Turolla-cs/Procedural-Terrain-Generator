@@ -1,6 +1,7 @@
 #include "terreno.h"
 #include <cstdlib>
 #include <ctime>
+#include <filesystem>
 
 struct Ponto {
     int linha;
@@ -140,7 +141,7 @@ Terreno::Terreno(int n, double rugos) {
         diamond.linha = diamond.coluna = (n-1)/2;
 
 
-        int min = 0; //0 a 20 aguas profundas, 21 a 30 aguas rasas e praias, 31 a 45 planice e vales, 46 a 60 terra normal e colinas, 60 a 75 planaltos e montanhas médias, 76 a 90 montanha alta, 91 a 100 pico nevado.
+        int min = 0; 
         int max = 10000;
         int rnd1 = (rand() % (max-min+1)) + min;
         int rnd2 = (rand() % (max-min+1)) + min;
@@ -184,7 +185,9 @@ int Terreno::obterLincoln() const {
 }
 
 bool Terreno::salvarMatriz(std::string nomeArquivo) {
-    std::ofstream file(nomeArquivo);
+    std::string Caminho = "output";
+    std::filesystem::path destino = std::filesystem::path (Caminho)/nomeArquivo;
+    std::ofstream file(destino);
 
     if (file.is_open()) {
         file << lincoln << ' ' << rug << '\n';
@@ -203,7 +206,9 @@ bool Terreno::salvarMatriz(std::string nomeArquivo) {
 }
 
 bool Terreno::lerMatriz(std::string nomeArquivo) {
-    std::ifstream file(nomeArquivo);
+    std::string Caminho = "input";
+    std::filesystem::path fonte = std::filesystem::path (Caminho)/nomeArquivo;
+    std::ifstream file(fonte);
 
     if (!file.is_open()) {
         std::cerr << "Erro 52: nome de arquivo incorreto\n";
