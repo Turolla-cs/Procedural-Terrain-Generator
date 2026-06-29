@@ -16,9 +16,9 @@ class Paleta {
         Paleta();
         Paleta(std::string nomeDoArquivo);
 
-        Cor obterCor(int indice);
+        Cor obterCor(int indice) const;
         void adicionarCor(Cor novaEntrada);
-        int obterTamanho();
+        int obterTamanho() const;
 };
 
 #endif

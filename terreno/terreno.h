@@ -23,7 +23,7 @@ class Terreno{
         bool salvarMatriz(std::string nomeArquivo);
         bool lerMatriz(std::string nomeArquivo);
         void definirAltitude(int lin, int col, int alt);
-        double obterRugosidade();
+        double obterRug() const;
 };
 
 #endif 

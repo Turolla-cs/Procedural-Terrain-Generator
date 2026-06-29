@@ -9,13 +9,24 @@ struct Ponto {
 
 bool checkLincoln(int n) {
     int k = n - 1;
+    if (k <= 0) {
+        return false;
+    }
     while (k > 1) {
+        if (k % 2 != 0) {
+            return false;
+        }
         k /= 2;
     }
     if (k == 1) {
         return true;
     }
     return false;
+}
+
+double obterRugosidade(double r) {
+    double rugosidade = (rand() % (int)(r+r+1)) - r;
+    return rugosidade;
 }
 
 Terreno::Terreno() {
@@ -25,59 +36,84 @@ Terreno::Terreno() {
     mapaBool = nullptr;
 }
 
-int pontosSquare(int n, Ponto alvo, const Terreno& x, double r) {
+int pontosSquare(int n, Ponto alvo, Ponto diamond, const Terreno& x, double r) {
     int d = (n-1)/2;
-    if (alvo.linha == 0) {
-        return (((x.obterAltitude(alvo.linha, alvo.coluna-d) + x.obterAltitude(alvo.linha, alvo.coluna+d) + x.obterAltitude(alvo.linha+d, alvo.coluna))/3)+r);
+    if (alvo.linha == diamond.linha-d) {
+        return (((x.obterAltitude(alvo.linha, alvo.coluna-d) + x.obterAltitude(alvo.linha, alvo.coluna+d) + x.obterAltitude(alvo.linha+d, alvo.coluna))/3) + obterRugosidade(r));
     }
-    else if (alvo.linha == x.obterLincoln()-1) {
-        return (((x.obterAltitude(alvo.linha, alvo.coluna-d) + x.obterAltitude(alvo.linha, alvo.coluna+d) + x.obterAltitude(alvo.linha-d, alvo.coluna))/3)+r);
+    else if (alvo.linha == diamond.linha+d) {
+        return (((x.obterAltitude(alvo.linha, alvo.coluna-d) + x.obterAltitude(alvo.linha, alvo.coluna+d) + x.obterAltitude(alvo.linha-d, alvo.coluna))/3) + obterRugosidade(r));
     }
-    else if (alvo.coluna == 0) {
-        return (((x.obterAltitude(alvo.linha-d, alvo.coluna) + x.obterAltitude(alvo.linha, alvo.coluna+d) + x.obterAltitude(alvo.linha+d, alvo.coluna))/3)+r);
+    else if (alvo.coluna == diamond.coluna-d) {
+        return (((x.obterAltitude(alvo.linha-d, alvo.coluna) + x.obterAltitude(alvo.linha, alvo.coluna+d) + x.obterAltitude(alvo.linha+d, alvo.coluna))/3) + obterRugosidade(r));
     }
-    else if (alvo.coluna == x.obterLincoln()-1) {
-        return (((x.obterAltitude(alvo.linha, alvo.coluna-d) + x.obterAltitude(alvo.linha-d, alvo.coluna) + x.obterAltitude(alvo.linha+d, alvo.coluna))/3)+r);
+    else if (alvo.coluna == diamond.coluna+d) {
+        return (((x.obterAltitude(alvo.linha, alvo.coluna-d) + x.obterAltitude(alvo.linha-d, alvo.coluna) + x.obterAltitude(alvo.linha+d, alvo.coluna))/3) + obterRugosidade(r));
     }
     else {
-        return (((x.obterAltitude(alvo.linha, alvo.coluna-d) + x.obterAltitude(alvo.linha-d, alvo.coluna) + x.obterAltitude(alvo.linha+d, alvo.coluna) + x.obterAltitude(alvo.linha, alvo.coluna+d))/4)+r);
+        return (((x.obterAltitude(alvo.linha, alvo.coluna-d) + x.obterAltitude(alvo.linha-d, alvo.coluna) + x.obterAltitude(alvo.linha+d, alvo.coluna) + x.obterAltitude(alvo.linha, alvo.coluna+d))/4) + obterRugosidade(r));
     }
 }
 
-void diamondSquare(Ponto p, int n, Terreno& x) {
+void diamondSquare(Ponto p, int n, Terreno& x, double rugosidadeAnterior) {
     Ponto p1, p2, p3, p4, p12, p13, p24, p34;
     int d = (n-1)/2;
-    p1.linha = p.linha-d, p1.coluna = p.coluna-d;
-    p2.linha = p.linha-d, p2.coluna = p.coluna+d;
-    p3.linha = p.linha+d, p3.coluna = p.coluna-d;
-    p4.linha = p.linha+d, p4.coluna = p.coluna+d;
-    double r = x.obterRugosidade();
+    double rugosidadeAtual = rugosidadeAnterior / 2.5;
+
+    p1.linha = p.linha-d;
+    p1.coluna = p.coluna-d;
+
+    p2.linha = p.linha-d;
+    p2.coluna = p.coluna+d;
+
+    p3.linha = p.linha+d;
+    p3.coluna = p.coluna-d;
+
+    p4.linha = p.linha+d;
+    p4.coluna = p.coluna+d;
+
+    double r = obterRugosidade(rugosidadeAtual);
 
     int alt = ((x.obterAltitude(p1.linha, p1.coluna) + x.obterAltitude(p2.linha, p2.coluna) + x.obterAltitude(p3.linha, p3.coluna) + x.obterAltitude(p4.linha, p4.coluna))/4) + r;
     x.definirAltitude(p.linha, p.coluna, alt);
 
-    p12.linha = p1.linha, p12.coluna = p.coluna;
-    p13.linha = p.linha, p13.coluna = p1.coluna;
-    p24.linha = p.linha, p24.coluna = p4.coluna;
-    p34.linha = p3.linha, p34.coluna = p.coluna;
+    p12.linha = p1.linha;
+    p12.coluna = p.coluna;
 
-    x.definirAltitude(p12.linha, p12.coluna, pontosSquare(n, p12, x, r));
-    x.definirAltitude(p13.linha, p13.coluna, pontosSquare(n, p13, x, r));
-    x.definirAltitude(p24.linha, p24.coluna, pontosSquare(n, p24, x, r));
-    x.definirAltitude(p34.linha, p34.coluna, pontosSquare(n, p34, x, r));
+    p13.linha = p.linha;
+    p13.coluna = p1.coluna;
+
+    p24.linha = p.linha;
+    p24.coluna = p4.coluna;
+
+    p34.linha = p3.linha;
+    p34.coluna = p.coluna;
+
+    x.definirAltitude(p12.linha, p12.coluna, pontosSquare(n, p12, p, x, rugosidadeAtual));
+    x.definirAltitude(p13.linha, p13.coluna, pontosSquare(n, p13, p, x, rugosidadeAtual));
+    x.definirAltitude(p24.linha, p24.coluna, pontosSquare(n, p24, p, x, rugosidadeAtual));
+    x.definirAltitude(p34.linha, p34.coluna, pontosSquare(n, p34, p, x, rugosidadeAtual));
 
     if (n != 3) {
         Ponto p5, p6, p7, p8;
         int c = d/2;
-        p5.linha = p.linha-c, p5.coluna = p.coluna-c;
-        p6.linha = p.linha-c, p6.coluna = p.coluna+c;
-        p7.linha = p.linha+c, p7.coluna = p.coluna-c;
-        p8.linha = p.linha+c, p8.coluna = p.coluna+c;
+
+        p5.linha = p.linha-c;
+        p5.coluna = p.coluna-c;
+
+        p6.linha = p.linha-c;
+        p6.coluna = p.coluna+c;
+
+        p7.linha = p.linha+c;
+        p7.coluna = p.coluna-c;
+
+        p8.linha = p.linha+c;
+        p8.coluna = p.coluna+c;
     
-        diamondSquare(p5, (d+1), x);
-        diamondSquare(p6, (d+1), x);
-        diamondSquare(p7, (d+1), x);
-        diamondSquare(p8, (d+1), x);
+        diamondSquare(p5, (d+1), x, rugosidadeAtual);
+        diamondSquare(p6, (d+1), x, rugosidadeAtual);
+        diamondSquare(p7, (d+1), x, rugosidadeAtual);
+        diamondSquare(p8, (d+1), x, rugosidadeAtual);
     }
 }
 
@@ -90,20 +126,22 @@ Terreno::Terreno(int n, double rugos) {
         
         mapaAltitudes = new int*[n];
         for (int i = 0; i<n; i++) {
-            mapaAltitudes[i] = new int[n];
+            mapaAltitudes[i] = new int[n]();
         }
-        mapaBool = new bool[n*n];
-
+        mapaBool = new bool[n*n]();
+        
+        for (int i = 0; i < n*n; i++) {
+            mapaBool[i] = false;
+        }
 
         lincoln = n;
         rug = rugos;
         Ponto diamond;
-        diamond.linha = (n-1)/2, diamond.coluna = diamond.linha;
+        diamond.linha = diamond.coluna = (n-1)/2;
 
 
-        srand(time(0));
         int min = 0; //0 a 20 aguas profundas, 21 a 30 aguas rasas e praias, 31 a 45 planice e vales, 46 a 60 terra normal e colinas, 60 a 75 planaltos e montanhas médias, 76 a 90 montanha alta, 91 a 100 pico nevado.
-        int max = 100;
+        int max = 10000;
         int rnd1 = (rand() % (max-min+1)) + min;
         int rnd2 = (rand() % (max-min+1)) + min;
         int rnd3 = (rand() % (max-min+1)) + min;
@@ -115,12 +153,13 @@ Terreno::Terreno(int n, double rugos) {
         mapaAltitudes[0][n-1] = rnd2;
         mapaAltitudes[n-1][0] = rnd3;
         mapaAltitudes[n-1][n-1] = rnd4;
+
         mapaBool[0] = true;
         mapaBool[n-1] = true;
         mapaBool[n*(n-1)] = true;
         mapaBool[(n-1)*(n+1)] = true;
 
-        diamondSquare(diamond, n, *this);
+        diamondSquare(diamond, n, *this, rug);
 
     }
     else {
@@ -180,13 +219,17 @@ bool Terreno::lerMatriz(std::string nomeArquivo) {
             delete[] mapaAltitudes[i];
         }
         delete[] mapaAltitudes;
+    }
+
+    if (mapaBool != nullptr) {
         delete[] mapaBool;
     }
-    mapaAltitudes = new int*[lincoln];
+
+    mapaAltitudes = new int*[lincoln]();
     for (int i = 0; i<lincoln; i++) {
         mapaAltitudes[i] = new int[lincoln];
     }
-    mapaBool = new bool[lincoln*lincoln];
+    mapaBool = new bool[lincoln*lincoln]();
     
     for (int i = 0; i < lincoln; i++) {
         for (int j = 0; j < lincoln; j++) {
@@ -204,9 +247,6 @@ void Terreno::definirAltitude(int lin, int col, int alt) {
     }
 }
 
-double Terreno::obterRugosidade() {
-    srand(time(0));
-    double rugosidade = (rand() % (int)(rug+rug+1)) - rug;
-    rug/2;
-    return rugosidade;
+double Terreno::obterRug() const {
+    return rug;
 }

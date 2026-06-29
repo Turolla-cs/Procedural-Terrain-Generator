@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <cmath>
 
 
 Imagem::Imagem() { 
@@ -100,3 +101,85 @@ bool Imagem::salvarPPM(std::string nomeArquivo) {
 
     return true;
 }
+
+
+
+Imagem::Imagem(const Terreno& terreno, const Paleta& paleta) {
+
+    double *luminosidade;
+    luminosidade = new double[terreno.obterLincoln()*terreno.obterLincoln()];
+
+    largura = altura = terreno.obterLincoln();
+
+    matriz = new Pixel[largura * altura];
+    int t = paleta.obterTamanho();
+
+    int altMax, altMin;
+    altMax = altMin = terreno.obterAltitude(0, 0);
+
+    for (int i = 0; i < largura; i++) {
+        for (int j = 0; j < altura; j++) {
+            if (altMax < terreno.obterAltitude(i, j)) {
+                altMax = terreno.obterAltitude(i, j);
+            }
+            if (altMin > terreno.obterAltitude(i, j)) {
+                altMin = terreno.obterAltitude(i, j);
+            }
+        }
+    }
+
+    for (int i = 0; i < largura; i++) {
+
+        for (int j = 0; j < altura; j++) {
+            bool abraham = true;
+            luminosidade[i*largura+j] = 1;
+            
+            
+
+            for (int k = 0; k < t && abraham; k++) {
+
+                if (terreno.obterAltitude(i, j) <= (int)(((double)(k + 1) / t) * (altMax-altMin)) || k == t - 1) {
+
+                    Cor truta = paleta.obterCor(k);
+
+                    if (i > 0 && j > 0) {
+
+                        int a = terreno.obterAltitude(i, j);
+                        int b = terreno.obterAltitude(i-1, j-1);
+                        int n;
+
+
+                        if (largura > 1024) {
+                            n = std::log2(altura-1);
+                        } else {
+                            n = 1;
+                        }
+
+                        if (n*b/largura > n*a/largura) {
+                        
+                            luminosidade[i*largura+j] = 0.5;
+
+                        } else if (n*a/largura > n*b/largura) {
+                            
+                            luminosidade[i*largura+j] = 1;
+                        } else {
+                            luminosidade[i*largura+j] = 0.75;
+                        }
+
+                        truta.r *= luminosidade[i*largura+j];
+                        truta.g *= luminosidade[i*largura+j];
+                        truta.b *= luminosidade[i*largura+j];
+                    }
+                    definirPixel(j, i, truta);
+                    abraham = false;
+                }
+
+            }
+
+
+        }
+    }
+
+    delete[] luminosidade;
+}
+

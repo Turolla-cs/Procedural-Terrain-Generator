@@ -74,11 +74,11 @@ void Paleta::adicionarCor(Cor novaCor){
     cores.push_back(novaCor);
 }
 
-int Paleta::obterTamanho(){
+int Paleta::obterTamanho() const {
     return cores.size();
 }
 
-Cor Paleta::obterCor(int indice){
+Cor Paleta::obterCor(int indice) const {
     if (indice < cores.size()) {
         return cores[indice];
     } else {

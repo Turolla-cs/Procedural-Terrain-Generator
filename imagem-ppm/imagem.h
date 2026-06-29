@@ -1,7 +1,8 @@
 #ifndef IMAGEM_H
 #define IMAGEM_H
 
-#include "../paleta/paleta.h" 
+#include "../paleta/paleta.h"
+#include "../terreno/terreno.h"
 
 using Pixel = Cor;
 
@@ -13,6 +14,9 @@ class Imagem {
     public:
         Imagem();
         Imagem(int j, int i);
+
+        Imagem(const Terreno& terreno, const Paleta& paleta);
+
         ~Imagem();
 
         Pixel& obterPixel(int j, int i);
